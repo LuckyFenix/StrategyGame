@@ -44,8 +44,8 @@ JavelinThrower.prototype.move_to = function(vector)
                 this.curentMovePoints = this.curentMovePoints - this.way.length;
             } else
             {
-                this.positionX = this.way[this.curentMovePoints][0];
-                this.positionY = this.way[this.curentMovePoints][1];
+                this.positionX = this.way[this.curentMovePoints - 1][0];
+                this.positionY = this.way[this.curentMovePoints - 1][1];
                 this.way.splice(0, this.movePoints);
                 this.curentMovePoints = 0;
             }
