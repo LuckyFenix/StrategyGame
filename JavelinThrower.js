@@ -69,8 +69,6 @@ JavelinThrower.prototype.move_to = function(vector)
         }
     };
 
-    var a = Date.now();
-
     var d = 0;
     do
     {
@@ -89,8 +87,6 @@ JavelinThrower.prototype.move_to = function(vector)
         }
         d++;
     } while (mas[vector.X][vector.Y] == undefined);
-    var b = Date.now();
-    console.log((b - a) / 1000);
 
     var way = [];
     var addWay = function(x, y)
@@ -120,12 +116,8 @@ JavelinThrower.prototype.move_to = function(vector)
         }
         way.push([x, y]);
     };
-    if (vector != null)
-    {
-        addWay(vector.X, vector.Y);
-        this.way = way.slice();
-    }
-    console.log(this.way);
+    addWay(vector.X, vector.Y);
+    this.way = way.slice();
     if (this.way.length <= this.curentMovePoints)
     {
         this.positionX = this.way[this.way.length - 1][0];
@@ -134,9 +126,12 @@ JavelinThrower.prototype.move_to = function(vector)
         this.way = [];
     } else
     {
-        this.positionX = this.way[this.curentMovePoints - 1][0];
-        this.positionY = this.way[this.curentMovePoints - 1][1];
-        this.way.splice(0, this.movePoints);
+        if (this.curentMovePoints != 0)
+        {
+            this.positionX = this.way[this.curentMovePoints - 1][0];
+            this.positionY = this.way[this.curentMovePoints - 1][1];
+        }
+        this.way.splice(0, this.curentMovePoints);
         this.curentMovePoints = 0;
     }
 };

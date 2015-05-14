@@ -111,7 +111,7 @@ app.get('/new_hero/:type/:name', function (req, res, next) //Створення 
             y = getRandomInt(0, world.fields[0].length);
         } while (world.fields == 'x');
 
-        users.push([ip, new JavelinThrower(name, 'орк', 70, 30, 50, 10, 8, 8, 0.05, 'physical', 5, x, y, 0.9), 0])
+        users.push([ip, new JavelinThrower(name, 'орк', 70, 30, 50, 10, 50, 20, 0.05, 'physical', 5, x, y, 0.9), 0])
     } else if (type == 'berserker')
     {
         do {
@@ -119,7 +119,7 @@ app.get('/new_hero/:type/:name', function (req, res, next) //Створення 
             y = getRandomInt(0, world.fields[0].length - 1);
         } while (world.fields == 'x');
 
-        users.push([ip, new Berserker(name, 'орк', 30, 54, 40, 8, 12, 10, 0.15, 'physical', 8, x, y, 0.85), 0])
+        users.push([ip, new Berserker(name, 'орк', 30, 54, 40, 8, 55, 25, 0.15, 'physical', 8, x, y, 0.85), 0])
     } else
     {
         res.send(200, 'Невірно вказаний тип персонажа.');
