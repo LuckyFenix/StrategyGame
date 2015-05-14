@@ -51,6 +51,9 @@ JavelinThrower.prototype.move_to = function(vector)
             }
         }
         return;
+    } else
+    {
+        this.way = [];
     }
     mas[this.positionX][this.positionY] = 0;
 
@@ -89,7 +92,7 @@ JavelinThrower.prototype.move_to = function(vector)
     var b = Date.now();
     console.log((b - a) / 1000);
 
-    var way = [];
+    way = [];
     var addWay = function(x, y)
     {
         var min = [x, y];
