@@ -127,12 +127,12 @@ JavelinThrower.prototype.move_to = function(vector)
     {
         this.positionX = this.way[this.way.length - 1][0];
         this.positionY = this.way[this.way.length - 1][1];
+        this.curentMovePoints -= this.way.length;
         this.way = [];
-        this.curentMovePoints = this.curentMovePoints - this.way.length;
     } else
     {
-        this.positionX = this.way[this.curentMovePoints][0];
-        this.positionY = this.way[this.curentMovePoints][1];
+        this.positionX = this.way[this.curentMovePoints - 1][0];
+        this.positionY = this.way[this.curentMovePoints - 1][1];
         this.way.splice(0, this.movePoints);
         this.curentMovePoints = 0;
     }

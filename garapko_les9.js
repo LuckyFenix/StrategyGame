@@ -168,20 +168,21 @@ app.get('/move_to/:x/:y', function(req, res, next) //Рух до координ�
     }
     var x = req.params.x;
     var y = req.params.y;
+    var response = '';
     if (isNaN(x) || isNaN(y))
     {
-        res.send(200, 'Невірний формат координат.');
+        response += 'Невірний формат координат.';
     } else if (x < 0 || x >= world.w || y < 0 || y >= world.h)
     {
-        res.send(200, 'Невірний формат координат.');
+        response += 'Невірний формат координат.';
     } else if (x == user[1].positionX && y == user[1].positionY)
     {
-        res.send(200, 'Неможливий напрямок' );
+        response += 'Неможливий напрямок';
     } else
     {
         user[1].move_to(new Vector(x, y));
     }
-    var response = '<div>У вас залишилось ' + user[1].curentMovePoints + ' очків руху</div>';
+    response += '<div>У вас залишилось ' + user[1].curentMovePoints + ' очків руху</div>';
     response += getStatus();
     res.status(200).send(response);
 });
