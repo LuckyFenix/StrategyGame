@@ -1,7 +1,7 @@
 /**
  * Created by Robert on 05.05.2015.
  */
-require('./garapko_les9');
+require('./server');
 
 function Berserker(name, race, str, agl, vit, defence, moveSpeed, range, criticalDamageChance, typeOfDamage, regeneration, positionX, positionY, windRes)
 {

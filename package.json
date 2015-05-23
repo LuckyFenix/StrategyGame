@@ -1,13 +1,21 @@
 {
-  "name": "Lesson13",
+  "name": "Lesson9",
   "version": "1.0.0",
-  "main": "garapko_les9.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "LuckyFenix",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "express": "^4.12.3"
+    "async": "^0.9.0",
+    "body-parser": "^1.12.3",
+    "bookshelf": "^0.8.1",
+    "express": "^4.12.3",
+    "knex": "^0.8.6",
+    "mongodb": "^2.0.29",
+    "mongoose": "^4.0.2",
+    "morgan": "^1.5.2",
+    "pg": "^4.3.0"
   }
 }

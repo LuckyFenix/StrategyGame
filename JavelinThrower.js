@@ -86,7 +86,7 @@ JavelinThrower.prototype.move_to = function(vector)
             }
         }
         d++;
-    } while (mas[vector.X][vector.Y] == undefined);
+    } while (mas[vector.X]  [vector.Y] == undefined);
 
     var way = [];
     var addWay = function(x, y)
@@ -140,12 +140,25 @@ JavelinThrower.prototype.fight = function(object)
 {
     if ((new Vector(this.positionX, this.positionY)).range(new Vector(object.positionX, object.positionY)) > this.range)
     {
-        return;
+        return "Ціль знаходиться занадто далеко.";
     }
     if (this.hitPoint == 0)
     {
-        return;
+        return "Ваш персонаж мертвий, ви не можете здійснити дану дію.";
     }
+    if (this.ulredy_fight)
+    {
+        return "Ви вже атакували на цьому ході.";
+    }
+    if (this.curentMovePoints < this.movePoints / 2)
+    {
+        return 'Недостатньо очків руху.';
+    }
+    if (object == null)
+    {
+        return 'Такої цілі не існує.';
+    }
+    this.ulredy_fight = true;
     var damage = this.str;
     if (Math.random() <= (this.criticalDamageChance + this.agl / 1000))
     {
@@ -157,7 +170,7 @@ JavelinThrower.prototype.fight = function(object)
         damage = 0;
     }
     damage = damage > object.hitPoint ? object.hitPoint : damage;
-    object.hitPoint = (object.hitPoint - damage);
+    object.hitPoint -= damage;
 };
 
 JavelinThrower.prototype.regen = function()
@@ -173,6 +186,11 @@ JavelinThrower.prototype.regen = function()
 
 JavelinThrower.prototype.end = function()
 {
+    if (this.hitPoint == 0)
+    {
+        return;
+    }
+    this.ulredy_fight = false;
     this.regen();
     this.curentMovePoints = this.movePoints;
 };

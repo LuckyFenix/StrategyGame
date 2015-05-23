@@ -6,6 +6,11 @@ require('./World');
 var express = require('express');
 var http = require('http');
 var path = require('path');
+var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+var db = mongoose.connection;
+db.on('error', console.error);
+mongoose.connect('mongodb://localhost/gameDB');
 
 var app = express();
 app.set('port', 3030);
@@ -14,6 +19,13 @@ http.createServer(app).listen(app.get('port'), function()
 {
     console.log('Server start on port' + app.get('port'));
 });
+
+var movieSchema = new mongoose.Schema({
+    ip: String
+    , character: JavelinThrower
+    , isHisTurn: Boolean
+});
+var Users = mongoose.model('Users', movieSchema);
 
 var users = [];
 
@@ -192,21 +204,17 @@ app.get('/fight/:object', function(req, res, next) //Атакувати об'є�
     var ip = req.ip;
     if (getPersonByIP(ip)[2] == 0)
     {
-        res.send(200, 'Зараз не ваш хід.');
+        res.status(200).send('Зараз не ваш хід.');
         return;
     }
     var object = getPersonByName(req.params.object);
-    if (object == null)
+    var fight_result = getPersonByIP(ip)[1].fight(object[1]);
+    console.log(fight_result);
+    if (fight_result != undefined)
     {
-        res.send(200, 'Такої цілі не існує.');
+        res.status(200).send(fight_result);
         return;
     }
-    if (getPersonByIP(ip)[1].curentMovePoints < getPersonByIP(ip)[1].movePoints)
-    {
-        res.send(200, 'Недостатньо очків руху.');
-        return;
-    }
-    getPersonByIP(ip)[1].fight(object);
     var response = '<div>У вас залишилось ' + getPersonByIP(ip)[1].curentMovePoints + ' очків руху</div>';
     response += getStatus();
     res.status(200).send(response);
