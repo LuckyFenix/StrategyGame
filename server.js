@@ -59,6 +59,45 @@ function getPersonByName(name)
     return null;
 }
 
+app.use(function(req, res, next)
+{
+    var ip = req.ip;
+    var person = getPersonByIP(ip);
+    if (person == null)
+    {
+        userDAO.Users.findOne({ip : ip}, function (err, user)
+        {
+            if (err)
+                return console.error(err);
+            if (user != null)
+            {
+                if (user.type == 'javelin_thrower')
+                {
+                    var jt = new JavelinThrower(user.character.name, 'человек', 70, 30, 50, 10, 50, 20, 0.05, 'physical', 5, user.character.positionX, user.character.positionY, 0.9);
+                    jt.hitPoint = user.character.hitPoint;
+                    jt.way = user.character.way;
+                    users.push([ip, jt, 'javelin_thrower', 0]);
+
+                } else if (user.type == 'berserker')
+                {
+                    var b = new Berserker(user.name, 'орк', 30, 54, 40, 8, 55, 25, 0.15, 'physical', 8, user.positionX, user.positionY, 0.85);
+                    b.hitPoint = user.character.hitPoint;
+                    b.way = user.character.way;
+                    users.push([ip, b, 'berserker', 0]);
+                }
+                if (users.length == 1)
+                {
+                    users[0][3] = 1;
+                }
+            }
+            next();
+        });
+    } else
+    {
+        next();
+    }
+});
+
 app.get('/new_hero', function (req, res, next) //Інструкція по створенню персонажа
 {
     var ip = req.ip;
@@ -141,6 +180,11 @@ app.get('/move_to', function(req, res, next) //Продовжити рух до 
     if (user[3] == 0)
     {
         res.send(200, 'Зараз не ваш хід.');
+        return;
+    }
+    if (user[1].way.length == 0)
+    {
+        res.status(200).send('Ви не визначились з шляхом.');
         return;
     }
     getPersonByIP(ip)[1].move_to(null);

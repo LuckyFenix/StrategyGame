@@ -132,13 +132,4 @@ UsersDAO.prototype.updateUsers = function(users)
     });
 };
 
-UsersDAO.prototype.uploadUser = function(ip)
-{
-    var Users = this.Users;
-    Users.findOne({ip: ip}, function(err, u)
-    {
-
-    });
-};
-
 global.UsersDAO = UsersDAO;
