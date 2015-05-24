@@ -22,9 +22,10 @@ function JavelinThrower(name, race, str, agl, vit, defence, movePoints, range, c
     this.baseHitPoint = vit * 10;
     this.hitPoint = this.baseHitPoint;
     this.evasion = (agl / 2) / 100;
+    this.way = [];
 }
 
-JavelinThrower.prototype.move_to = function(vector)
+ JavelinThrower.prototype.move_to = function(vector)
 {
     if (this.hitPoint == 0)
     {

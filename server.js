@@ -2,34 +2,19 @@ require('./Vector');
 require('./JavelinThrower');
 require('./Berserker');
 require('./World');
+require('./UsersDAO');
 
 var express = require('express');
 var http = require('http');
 var path = require('path');
 var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
-var db = mongoose.connection;
-db.on('error', console.error);
-mongoose.connect('mongodb://localhost/gameDB');
+var userDAO = new UsersDAO();
 
 var app = express();
-app.set('port', 3030);
 
-http.createServer(app).listen(app.get('port'), function()
-{
-    console.log('Server start on port' + app.get('port'));
-});
-
-var movieSchema = new mongoose.Schema({
-    ip: String
-    , character: JavelinThrower
-    , isHisTurn: Boolean
-});
-var Users = mongoose.model('Users', movieSchema);
-
-var users = [];
 
 global.world = new World(600, 800);
+var users = [];
 
 function getRandomInt(min, max)
 {
@@ -123,7 +108,7 @@ app.get('/new_hero/:type/:name', function (req, res, next) //Створення 
             y = getRandomInt(0, world.fields[0].length);
         } while (world.fields == 'x');
 
-        users.push([ip, new JavelinThrower(name, 'орк', 70, 30, 50, 10, 50, 20, 0.05, 'physical', 5, x, y, 0.9), 0])
+        users.push([ip, new JavelinThrower(name, 'человек', 70, 30, 50, 10, 50, 20, 0.05, 'physical', 5, x, y, 0.9), 'javelin_thrower', 0]);
     } else if (type == 'berserker')
     {
         do {
@@ -131,7 +116,7 @@ app.get('/new_hero/:type/:name', function (req, res, next) //Створення 
             y = getRandomInt(0, world.fields[0].length - 1);
         } while (world.fields == 'x');
 
-        users.push([ip, new Berserker(name, 'орк', 30, 54, 40, 8, 55, 25, 0.15, 'physical', 8, x, y, 0.85), 0])
+        users.push([ip, new Berserker(name, 'орк', 30, 54, 40, 8, 55, 25, 0.15, 'physical', 8, x, y, 0.85), 'berserker', 0]);
     } else
     {
         res.send(200, 'Невірно вказаний тип персонажа.');
@@ -139,7 +124,7 @@ app.get('/new_hero/:type/:name', function (req, res, next) //Створення 
     }
     if (users.length == 1)
     {
-        users[0][2] = 1;
+        users[0][3] = 1;
     }
     res.status(200).send('Персонажа створено!')
 });
@@ -153,7 +138,7 @@ app.get('/move_to', function(req, res, next) //Продовжити рух до 
         res.status(200).send('Персонаж не був створений!');
         return;
     }
-    if (user[2] == 0)
+    if (user[3] == 0)
     {
         res.send(200, 'Зараз не ваш хід.');
         return;
@@ -173,7 +158,7 @@ app.get('/move_to/:x/:y', function(req, res, next) //Рух до координ�
         res.status(200).send('Персонаж не був створений!');
         return;
     }
-    if (user[2] == 0)
+    if (user[3] == 0)
     {
         res.send(200, 'Зараз не ваш хід.');
         return;
@@ -202,7 +187,7 @@ app.get('/move_to/:x/:y', function(req, res, next) //Рух до координ�
 app.get('/fight/:object', function(req, res, next) //Атакувати об'єкт
 {
     var ip = req.ip;
-    if (getPersonByIP(ip)[2] == 0)
+    if (getPersonByIP(ip)[3] == 0)
     {
         res.status(200).send('Зараз не ваш хід.');
         return;
@@ -224,12 +209,17 @@ app.get('/end', function(req, res, next) //Закінчити хід
 {
     var ip = req.ip;
     getPersonByIP(ip)[1].end();
-    getPersonByIP(ip)[2] = 0;
+    getPersonByIP(ip)[3] = 0;
     var i = users.indexOf(getPersonByIP(ip));
     if (i == users.length - 1)
-        users[0][2] = 1;
+    {
+        users[0][3] = 1;
+    }
     else
-        users[i + 1][2] = 1;
+    {
+        users[i + 1][3] = 1;
+    }
+    userDAO.updateUsers(users);
     res.status(200).send('Хід закінчено.');
 });
 
@@ -239,11 +229,15 @@ app.get('/status', function(req, res, next) //Побачити ситуацію 
     var response = '';
     if (getPersonByIP(ip) == null) {
         response += '<div>Зараз не ваш хід.</div>';
-    } else if (getPersonByIP(ip)[2] == 0) {
+    } else if (getPersonByIP(ip)[3] == 0) {
         response += '<div>Зараз не ваш хід.</div>';
     } else {
         response += '<div>У вас залишилось ' + getPersonByIP(ip)[1].curentMovePoints + ' очків руху</div>';
     }
     response += getStatus();
     res.status(200).send(response);
+});
+
+app.listen(3030, function () {
+    console.log('Server start on port = 3030');
 });
